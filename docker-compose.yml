@@ -1,0 +1,17 @@
+services:
+  database:
+    image: postgis/postgis:16-3.4
+    container_name: evacuapp-postgis
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: evacuapp
+      POSTGRES_USER: evacuapp_user
+      POSTGRES_PASSWORD: evacuapp_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+      - ./docker/init-postgis.sql:/docker-entrypoint-initdb.d/init-postgis.sql
+
+volumes:
+  postgis_data:

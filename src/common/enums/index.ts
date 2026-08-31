@@ -1,0 +1,55 @@
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+}
+
+export enum MobilityType {
+  PEATON = 'PEATON',
+  VEHICULO = 'VEHICULO',
+  MOVILIDAD_REDUCIDA = 'MOVILIDAD_REDUCIDA',
+}
+
+export enum EmergencyType {
+  EARTHQUAKE = 'EARTHQUAKE',
+  TSUNAMI = 'TSUNAMI',
+  WILDFIRE = 'WILDFIRE',
+  FLOOD = 'FLOOD',
+  SIMULATION = 'SIMULATION',
+}
+
+export enum EmergencyStatus {
+  DRAFT = 'DRAFT',
+  ACTIVE = 'ACTIVE',
+  RESOLVED = 'RESOLVED',
+  CANCELLED = 'CANCELLED',
+}
+
+export enum IncidentType {
+  BLOQUEO_VIAL = 'BLOQUEO_VIAL',
+  ESCOMBROS = 'ESCOMBROS',
+  INUNDACION = 'INUNDACION',
+  INCENDIO = 'INCENDIO',
+  ACCIDENTE = 'ACCIDENTE',
+  RUTA_INACCESIBLE = 'RUTA_INACCESIBLE',
+  PELIGRO_GENERAL = 'PELIGRO_GENERAL',
+}
+
+export enum IncidentSeverity {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL',
+}
+
+export enum IncidentStatus {
+  PENDING = 'PENDING',
+  VERIFIED = 'VERIFIED',
+  REJECTED = 'REJECTED',
+  EXPIRED = 'EXPIRED',
+}
+
+export enum PointOfInterestType {
+  HOSPITAL = 'HOSPITAL',
+  BOMBEROS = 'BOMBEROS',
+  POLICIA = 'POLICIA',
+}
