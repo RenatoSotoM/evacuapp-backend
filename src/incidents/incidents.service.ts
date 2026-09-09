@@ -1,25 +1,69 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { IncidentStatus } from '../common/enums';
+import { IncidentSeverity, IncidentStatus } from '../common/enums';
+import { MlReliabilityService } from '../ml/ml-reliability.service';
 import { CreateIncidentDto } from './dto/create-incident.dto';
 import { Incident } from './entities/incident.entity';
 
 @Injectable()
 export class IncidentsService {
-  constructor(@InjectRepository(Incident) private readonly repository: Repository<Incident>) {}
+  constructor(
+    @InjectRepository(Incident) private readonly repository: Repository<Incident>,
+    private readonly mlReliability: MlReliabilityService,
+  ) {}
 
-  create(userId: string, dto: CreateIncidentDto) {
+  async create(userId: string, dto: CreateIncidentDto) {
+    const features = {
+      alpha: 1,
+      beta: 1,
+      reportes_cercanos: 0,
+      usuarios_distintos: 1,
+      min_desde_primer_reporte: 0,
+      antiguedad_min: 0,
+      reputacion_usuario: 0.5,
+      usuario_nuevo: 1,
+      tiene_foto: 0,
+      severidad: this.mapSeverity(dto.severity),
+      dist_zona_amenaza_m: 0,
+      precision_gps_m: 10,
+      hora: new Date().getHours(),
+      tipo_incidente: this.mapIncidentType(dto.type),
+      tipo_emergencia: 'NINGUNA',
+    };
+    const prediction = await this.mlReliability.predecir(features);
+    const status = this.toIncidentStatus(prediction?.estado_sugerido);
+
     return this.repository.save(
       this.repository.create({
         type: dto.type,
         severity: dto.severity,
+        status,
         description: dto.description,
         emergencyId: dto.emergencyId,
         reportedById: userId,
         location: { type: 'Point', coordinates: [dto.longitude, dto.latitude] },
       }),
     );
+  }
+
+  private mapSeverity(severity: IncidentSeverity): number {
+    return {
+      [IncidentSeverity.LOW]: 1,
+      [IncidentSeverity.MEDIUM]: 2,
+      [IncidentSeverity.HIGH]: 3,
+      [IncidentSeverity.CRITICAL]: 3,
+    }[severity];
+  }
+
+  private mapIncidentType(type: string): string {
+    return type === 'ESCOMBROS' ? 'DERRUMBE' : type === 'PELIGRO_GENERAL' ? 'OTRO' : type;
+  }
+
+  private toIncidentStatus(status?: string): IncidentStatus {
+    return Object.values(IncidentStatus).includes(status as IncidentStatus)
+      ? (status as IncidentStatus)
+      : IncidentStatus.PENDING;
   }
 
   async nearby(latitude: number, longitude: number, radius = 5000, onlyVerified = false) {

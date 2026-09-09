@@ -1,0 +1,249 @@
+{
+  "nombre": "EvacuApp - Confiabilidad de reportes ciudadanos",
+  "version": "1.0.0",
+  "fecha_entrenamiento": "2026-09-09T16:32:57.350494+00:00",
+  "origen_datos": "simulado:generar_dataset_sintetico(n=4000, seed=42)",
+  "n_reportes_entrenamiento": 4000,
+  "algoritmo": "RandomForestClassifier (RF-A Base)",
+  "hiperparametros": {
+    "n_estimators": 100,
+    "max_depth": null,
+    "min_samples_split": 2,
+    "min_samples_leaf": 1,
+    "max_features": "sqrt",
+    "class_weight": null,
+    "criterion": "gini",
+    "random_state": 42
+  },
+  "n_hojas_totales": 39808,
+  "features": [
+    "alpha",
+    "beta",
+    "confianza_beta",
+    "reportes_cercanos",
+    "usuarios_distintos",
+    "min_desde_primer_reporte",
+    "antiguedad_min",
+    "reputacion_usuario",
+    "usuario_nuevo",
+    "tiene_foto",
+    "severidad",
+    "dist_zona_amenaza_m",
+    "precision_gps_m",
+    "hora",
+    "tipo_incidente=BLOQUEO_VIAL",
+    "tipo_incidente=INCENDIO",
+    "tipo_incidente=INUNDACION",
+    "tipo_incidente=DERRUMBE",
+    "tipo_incidente=ACCIDENTE",
+    "tipo_incidente=RUTA_INACCESIBLE",
+    "tipo_incidente=OTRO",
+    "tipo_emergencia=SISMO",
+    "tipo_emergencia=INCENDIO",
+    "tipo_emergencia=INUNDACION",
+    "tipo_emergencia=TSUNAMI",
+    "tipo_emergencia=NINGUNA"
+  ],
+  "n_features": 26,
+  "numericas": [
+    "alpha",
+    "beta",
+    "confianza_beta",
+    "reportes_cercanos",
+    "usuarios_distintos",
+    "min_desde_primer_reporte",
+    "antiguedad_min",
+    "reputacion_usuario",
+    "usuario_nuevo",
+    "tiene_foto",
+    "severidad",
+    "dist_zona_amenaza_m",
+    "precision_gps_m",
+    "hora"
+  ],
+  "tipos_incidente": [
+    "BLOQUEO_VIAL",
+    "INCENDIO",
+    "INUNDACION",
+    "DERRUMBE",
+    "ACCIDENTE",
+    "RUTA_INACCESIBLE",
+    "OTRO"
+  ],
+  "tipos_emergencia": [
+    "SISMO",
+    "INCENDIO",
+    "INUNDACION",
+    "TSUNAMI",
+    "NINGUNA"
+  ],
+  "onnx": {
+    "entrada": "input",
+    "salidas": [
+      "label",
+      "probabilities"
+    ],
+    "indice_prob_valido": 1,
+    "dtype": "float32",
+    "diferencia_max_vs_sklearn": 4.172325134277344e-07
+  },
+  "umbrales": {
+    "valido": 0.6,
+    "probable": 0.4,
+    "regla": "prob>=valido -> VERIFIED; probable<=prob<valido -> PROBABLE; prob<probable -> PENDING/RECHAZADO"
+  },
+  "metricas_prueba_20pct": {
+    "umbral_0_5": {
+      "umbral": 0.5,
+      "accuracy": 0.9313,
+      "f1_no_valido": 0.9016,
+      "recall_no_valido": 0.8811,
+      "precision_no_valido": 0.9231,
+      "f1_valido": 0.9472,
+      "recall_valido": 0.9591,
+      "f1_macro": 0.9244,
+      "roc_auc": 0.9322,
+      "pr_auc": 0.9464,
+      "matriz_confusion": {
+        "tn": 252,
+        "fp": 34,
+        "fn": 21,
+        "tp": 493
+      }
+    },
+    "umbral_0.6": {
+      "umbral": 0.6,
+      "accuracy": 0.9263,
+      "f1_no_valido": 0.8956,
+      "recall_no_valido": 0.8846,
+      "precision_no_valido": 0.9068,
+      "f1_valido": 0.943,
+      "recall_valido": 0.9494,
+      "f1_macro": 0.9193,
+      "roc_auc": 0.9322,
+      "pr_auc": 0.9464,
+      "matriz_confusion": {
+        "tn": 253,
+        "fp": 33,
+        "fn": 26,
+        "tp": 488
+      }
+    }
+  },
+  "importancia_variables": [
+    [
+      "antiguedad_min",
+      0.1561
+    ],
+    [
+      "min_desde_primer_reporte",
+      0.1533
+    ],
+    [
+      "confianza_beta",
+      0.1448
+    ],
+    [
+      "precision_gps_m",
+      0.1187
+    ],
+    [
+      "reputacion_usuario",
+      0.0984
+    ],
+    [
+      "dist_zona_amenaza_m",
+      0.0531
+    ],
+    [
+      "beta",
+      0.0468
+    ],
+    [
+      "alpha",
+      0.0453
+    ],
+    [
+      "usuarios_distintos",
+      0.0436
+    ],
+    [
+      "reportes_cercanos",
+      0.0434
+    ],
+    [
+      "hora",
+      0.0234
+    ],
+    [
+      "tiene_foto",
+      0.0091
+    ],
+    [
+      "usuario_nuevo",
+      0.0089
+    ],
+    [
+      "severidad",
+      0.0089
+    ],
+    [
+      "tipo_incidente=BLOQUEO_VIAL",
+      0.0049
+    ],
+    [
+      "tipo_emergencia=SISMO",
+      0.0049
+    ],
+    [
+      "tipo_emergencia=INUNDACION",
+      0.0046
+    ],
+    [
+      "tipo_emergencia=INCENDIO",
+      0.0044
+    ],
+    [
+      "tipo_incidente=INUNDACION",
+      0.004
+    ],
+    [
+      "tipo_incidente=ACCIDENTE",
+      0.0038
+    ],
+    [
+      "tipo_emergencia=TSUNAMI",
+      0.0037
+    ],
+    [
+      "tipo_incidente=INCENDIO",
+      0.0036
+    ],
+    [
+      "tipo_emergencia=NINGUNA",
+      0.0034
+    ],
+    [
+      "tipo_incidente=DERRUMBE",
+      0.003
+    ],
+    [
+      "tipo_incidente=RUTA_INACCESIBLE",
+      0.003
+    ],
+    [
+      "tipo_incidente=OTRO",
+      0.0029
+    ]
+  ],
+  "tamano_mb": {
+    "joblib": 1.291,
+    "onnx": 3.07
+  },
+  "inferencia_onnx_ms_por_reporte_cpu": 0.015,
+  "libs": {
+    "scikit-learn": "1.9.0",
+    "skl2onnx": "1.20.0",
+    "onnxruntime": "1.29.0"
+  }
+}

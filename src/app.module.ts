@@ -7,6 +7,7 @@ import { IncidentsModule } from './incidents/incidents.module';
 import { PointsOfInterestModule } from './points-of-interest/points-of-interest.module';
 import { SafeZonesModule } from './safe-zones/safe-zones.module';
 import { UsersModule } from './users/users.module';
+import { MlModule } from './ml/ml.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { UsersModule } from './users/users.module';
     SafeZonesModule,
     PointsOfInterestModule,
     IncidentsModule,
+    MlModule,
   ],
 })
 export class AppModule {}

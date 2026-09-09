@@ -13,7 +13,7 @@ import { JwtStrategy } from './jwt.strategy';
   imports: [
     ConfigModule,
     TypeOrmModule.forFeature([User, MobilityProfile]),
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -22,5 +22,6 @@ import { JwtStrategy } from './jwt.strategy';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
+  exports: [JwtStrategy],
 })
 export class AuthModule {}
