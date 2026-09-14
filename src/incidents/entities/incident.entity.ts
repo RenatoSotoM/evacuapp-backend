@@ -37,6 +37,12 @@ export class Incident {
   @JoinColumn({ name: 'reported_by_id' })
   reportedBy: User;
 
+  @Column({ type: 'int', default: 1 })
+  alpha: number;
+
+  @Column({ type: 'int', default: 1 })
+  beta: number;
+
   @Column({ name: 'verified_at', type: 'timestamptz', nullable: true })
   verifiedAt?: Date;
 
