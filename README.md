@@ -33,6 +33,37 @@ $ npm install
 
 ## Compile and run the project
 
+The default Docker Compose setup starts only PostgreSQL and the ML service.
+The backend runs locally with Nest in watch mode, so `npm run start:dev` is the
+normal development command and owns port `3000`.
+
+### Start development dependencies
+
+```bash
+docker compose up -d
+npm run start:dev
+```
+
+The API is available at `http://localhost:3000/api/v1`. The Dockerized
+`backend` service is disabled by default through the `production` profile, so
+it cannot claim port `3000` during local development.
+
+### Run the complete stack in Docker
+
+Use this only when you do not run `npm run start:dev`:
+
+```bash
+docker compose --profile production up -d
+```
+
+If the port is still reported as busy, identify the owning process on Windows
+and stop only that process before starting Nest again:
+
+```powershell
+Get-NetTCPConnection -LocalPort 3000 -State Listen
+Stop-Process -Id <PID>
+```
+
 ```bash
 # development
 $ npm run start

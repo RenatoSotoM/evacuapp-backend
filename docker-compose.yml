@@ -19,6 +19,7 @@ services:
       retries: 10
 
   backend:
+    profiles: ["production"]
     build:
       context: .
       dockerfile: Dockerfile
