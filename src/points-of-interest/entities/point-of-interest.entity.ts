@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, Index } from 'typeorm';
 import { PointOfInterestType } from '../../common/enums';
 
 @Entity('points_of_interest')
@@ -18,6 +18,13 @@ export class PointOfInterest {
   @Column({ default: true })
   active: boolean;
 
+  @Index({ spatial: true })
   @Column({ type: 'geometry', spatialFeatureType: 'Point', srid: 4326 })
   location: object;
+
+  @Column({ type: 'double precision', nullable: true })
+  latitude: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  longitude: number;
 }

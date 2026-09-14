@@ -22,7 +22,7 @@ import { MlModule } from './ml/ml.module';
         password: config.getOrThrow<string>('DB_PASSWORD'),
         database: config.getOrThrow<string>('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: config.get<string>('NODE_ENV') !== 'production',
+        synchronize: false, // 👈 Cámbiaro a false para evitar que TypeORM altere las tablas/enums al iniciar
       }),
     }),
     AuthModule,
