@@ -8,6 +8,7 @@ import { PointsOfInterestModule } from './points-of-interest/points-of-interest.
 import { SafeZonesModule } from './safe-zones/safe-zones.module';
 import { UsersModule } from './users/users.module';
 import { MlModule } from './ml/ml.module';
+import { RoutingEngineModule } from './routing-engine/routing-engine.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { MlModule } from './ml/ml.module';
     PointsOfInterestModule,
     IncidentsModule,
     MlModule,
+    RoutingEngineModule,
   ],
 })
 export class AppModule {}

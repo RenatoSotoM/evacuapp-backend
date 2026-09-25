@@ -3,6 +3,7 @@ services:
     image: postgis/postgis:16-3.4
     container_name: evacuapp-postgis
     restart: unless-stopped
+    shm_size: '1gb'  # 👈 AUMENTA LA MEMORIA COMPARTIBA DE POSTGIS A 1 GB
     environment:
       POSTGRES_DB: evacuapp
       POSTGRES_USER: evacuapp_user
@@ -50,6 +51,25 @@ services:
     restart: unless-stopped
     ports:
       - "8001:8001"
+
+  graph-ingestion:
+    profiles: ["ingestion"]
+    build:
+      context: .
+      dockerfile: docker/ingestion/Dockerfile
+    container_name: evacuapp-graph-ingestion
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      PGHOST: database
+      PGPORT: 5432
+      PGDATABASE: evacuapp
+      PGUSER: evacuapp_user
+      PGPASSWORD: evacuapp_password
+      PBF_URL: https://download.geofabrik.de/south-america/chile-latest.osm.pbf
+    volumes:
+      - ./docker/data:/data
 
 volumes:
   postgis_data:
