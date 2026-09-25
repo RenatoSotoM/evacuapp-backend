@@ -4,6 +4,19 @@ import { DataSource } from 'typeorm';
 import { BoundingBoxProfileDto, TravelMode } from '../dto/bounding-box-profile.dto';
 
 type GraphCoordinate = { lat: number; lon: number };
+type GeoJsonLineString = { coordinates: [number, number][] };
+
+function parseJsonValue<T>(value: T | string): T {
+  return typeof value === 'string' ? (JSON.parse(value) as T) : value;
+}
+
+function parseQueryRows<T>(value: unknown): T[] {
+  const rows = typeof value === 'string' ? JSON.parse(value) : value;
+  if (!Array.isArray(rows)) {
+    throw new TypeError('La consulta del grafo debe devolver un arreglo de filas.');
+  }
+  return rows as T[];
+}
 
 export interface GraphResponse {
   profileApplied: Pick<BoundingBoxProfileDto, 'travelMode' | 'isReducedMobility'> & {
@@ -16,6 +29,10 @@ export interface GraphResponse {
     id: number;
     nodeFrom: number;
     nodeTo: number;
+    fromId: number;
+    toId: number;
+    source: number;
+    target: number;
     distance: number;
     weight: number;
     oneway: boolean;
@@ -112,7 +129,7 @@ export class GraphPipelineService {
       );
     }
 
-    const edgeRows = await this.dataSource.query(
+    const edgeQueryResult = await this.dataSource.query(
       `SELECT
         e.id,
         e.node_from AS "nodeFrom",
@@ -129,7 +146,8 @@ export class GraphPipelineService {
        FROM graph_edges e
        WHERE ${conditions.join(' AND ')}`,
       [...parameters, dto.avoidIncidents, dto.travelMode],
-    ) as Array<{
+    );
+    const edgeRows = parseQueryRows<{
       id: number;
       nodeFrom: number;
       nodeTo: number;
@@ -137,11 +155,14 @@ export class GraphPipelineService {
       weight: number;
       oneway: boolean;
       highwayType: string;
-      geometry: { coordinates: [number, number][] };
-    }>;
+      geometry: GeoJsonLineString | string;
+    }>(edgeQueryResult).map((edge) => ({
+      ...edge,
+      geometry: parseJsonValue<GeoJsonLineString>(edge.geometry),
+    }));
 
     const nodeIds = [...new Set(edgeRows.flatMap((edge) => [edge.nodeFrom, edge.nodeTo]))];
-    const nodeRows = nodeIds.length
+    const nodeQueryResult = nodeIds.length
       ? await this.dataSource.query(
           `SELECT id, ST_Y(geometry) AS lat, ST_X(geometry) AS lon
            FROM graph_nodes
@@ -149,6 +170,28 @@ export class GraphPipelineService {
           [nodeIds],
         )
       : [];
+    const nodeRows = parseQueryRows<{ id: number; lat: number; lon: number }>(
+      nodeQueryResult,
+    ).map((node) => ({
+      id: Number(node.id),
+      lat: Number(node.lat),
+      lon: Number(node.lon),
+    }));
+
+    const mappedEdges: GraphResponse['edges'] = edgeRows.map((edge) => ({
+      id: Number(edge.id),
+      nodeFrom: Number(edge.nodeFrom),
+      nodeTo: Number(edge.nodeTo),
+      fromId: Number(edge.nodeFrom),
+      toId: Number(edge.nodeTo),
+      source: Number(edge.nodeFrom),
+      target: Number(edge.nodeTo),
+      distance: Number(edge.distance),
+      weight: Number(edge.weight),
+      oneway: Boolean(edge.oneway),
+      highwayType: edge.highwayType,
+      geometry: edge.geometry.coordinates.map(([lon, lat]) => ({ lat, lon })),
+    }));
 
     return {
       profileApplied: {
@@ -159,10 +202,7 @@ export class GraphPipelineService {
         ringMax: hasCenter ? ringMax : undefined,
       },
       nodes: nodeRows,
-      edges: edgeRows.map((edge) => ({
-        ...edge,
-        geometry: edge.geometry.coordinates.map(([lon, lat]) => ({ lat, lon })),
-      })),
+      edges: mappedEdges,
     };
   }
 }

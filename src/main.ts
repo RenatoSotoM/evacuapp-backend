@@ -21,6 +21,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, document);
 
-  await app.listen(process.env.PORT ?? 3000);
+  // 👈 SE AGREGA '0.0.0.0' PARA ESCUCHAR EN TODAS LAS INTERFACES DE RED DE LA PC
+  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
 bootstrap();
